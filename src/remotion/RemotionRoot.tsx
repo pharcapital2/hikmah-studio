@@ -8,7 +8,7 @@ import { StoryCharacter } from '../components/scene/StoryCharacter';
 import { CinematicCameraRig } from '../components/scene/CinematicCameraRig';
 import { SubtitleOverlay } from '../components/ui/SubtitleOverlay';
 import { HikmahDalilOverlay } from '../components/ui/HikmahDalilOverlay';
-import { ProductionSceneR3F, ProductionOverlay, KONTEN_HIKMAH_1, KONTEN_HIKMAH_2 } from '../scenes';
+import { ProductionSceneR3F, ProductionOverlay, KONTEN_HIKMAH_1, KONTEN_HIKMAH_2, KONTEN_HIKMAH_3 } from '../scenes';
 
 export interface HikmahCompositionProps {
   scriptId?: string;
@@ -131,11 +131,44 @@ export const HikmahKonten2Composition: React.FC = () => {
   );
 };
 
+export const HikmahKonten3Composition: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps, width, height } = useVideoConfig();
+  const currentTime = frame / fps;
+
+  return (
+    <AbsoluteFill className="bg-slate-950">
+      <ThreeCanvas
+        width={width}
+        height={height}
+        shadows
+        camera={{ position: [0, 5, 20], fov: 45, near: 0.1, far: 500 }}
+      >
+        <ProductionSceneR3F
+          story={KONTEN_HIKMAH_3}
+          currentTime={currentTime}
+          fps={fps}
+          frame={frame}
+        />
+      </ThreeCanvas>
+      <ProductionOverlay story={KONTEN_HIKMAH_3} currentTime={currentTime} />
+    </AbsoluteFill>
+  );
+};
+
 export const RemotionRoot: React.FC = () => {
   return (
     <>
       <Composition
-        id="HikmahKonten1_9x16"
+        id="HikmahKonten3-9x16"
+        component={HikmahKonten3Composition}
+        durationInFrames={3462}
+        fps={30}
+        width={720}
+        height={1280}
+      />
+      <Composition
+        id="HikmahKonten1-9x16"
         component={HikmahKonten1Composition}
         durationInFrames={3600}
         fps={60}
@@ -143,7 +176,7 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
       />
       <Composition
-        id="HikmahKonten2_9x16"
+        id="HikmahKonten2-9x16"
         component={HikmahKonten2Composition}
         durationInFrames={3600}
         fps={60}

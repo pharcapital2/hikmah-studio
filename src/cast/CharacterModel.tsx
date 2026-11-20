@@ -284,8 +284,12 @@ export const CharacterModel: React.FC<CharacterModelProps> = ({
   const m = speaking ? sampleMouth(visemes, time) : sampleMouth([], 0);
   const blink = blinkAt(c.seed, time);
 
-  // Napas halus & ayunan kepala deterministik
+  // Napas dua lapis: napas dasar 15x/menit + napas dalam lambat (7.5x/menit,
+  // fase berbeda per karakter via seed) agar dada tidak bergerak seperti
+  // metronom. Bahu ikut naik sedikit saat menarik napas.
   const breath = Math.sin(time * Math.PI * 2 * 0.25);
+  const breathDeep = Math.sin(time * Math.PI * 2 * 0.125 + c.seed * 1.7);
+  const breathAmp = breath * 0.75 + breathDeep * 0.25;
   const sway = Math.sin(time * 0.7 + c.seed) * 1.5 * D;
 
   const emphasisPulse = emphasisTimes.reduce((acc, et) => {
@@ -298,10 +302,14 @@ export const CharacterModel: React.FC<CharacterModelProps> = ({
   const browLift =
     ex.brow + (speaking ? emphasisPulse * 0.35 + (isQuestion ? 0.25 : 0) : 0);
 
-  // Gestur tangan saat berbicara (khusus aksi yang tangannya tidak memegang prop / melambai)
+  // Gestur tangan mengikuti penekanan kata (emphasis), bukan sinus kontinu:
+  // tangan naik saat kata ditekankan lalu kembali istirahat. Baseline kecil
+  // (0.15) menjaga tangan tetap hidup di sela kata tanpa melambai terus.
   const allowSpeechGesture =
     speaking && (action === 'idle' || action === 'walk' || action === 'sit');
-  const phrase = allowSpeechGesture ? Math.sin(time * 3.1 + c.seed) * 0.5 + 0.5 : 0;
+  const phrase = allowSpeechGesture
+    ? (0.15 + emphasisPulse) * (0.55 + 0.45 * Math.sin(time * 3.1 + c.seed))
+    : 0;
 
   // Arah pandang mata & sakade deterministik
   const [sx, sy] = saccadeAt(c.seed, time);
@@ -334,7 +342,8 @@ export const CharacterModel: React.FC<CharacterModelProps> = ({
   const mouthW = 0.042 * (0.65 + m.wide * 0.65 - m.round * 0.38 + Math.max(0, ex.smile) * 0.12);
   const mouthH = 0.042 * Math.max(0.16, openAmount * 1.05);
   const cheekScale = 1 + m.cheek * 0.18 + Math.max(0, ex.smile) * 0.14;
-  const eyeSquashY = Math.max(0.06, blink * ex.eyeOpen);
+  // Senyum menyipitkan mata sedikit (di luar eyeOpen bawaan ekspresi happy)
+  const eyeSquashY = Math.max(0.06, blink * ex.eyeOpen * (1 - Math.max(0, ex.smile) * 0.12));
   const isSurprised = emotion === 'surprised';
 
   const legs = [
@@ -347,8 +356,28 @@ export const CharacterModel: React.FC<CharacterModelProps> = ({
     { side: -1 as const, pose: pose.armR },
   ];
 
+  // Bayangan kontak (blob shadow): menambatkan karakter ke tanah agar tidak
+  // terlihat mengambang — penting karena mesh karakter tidak melempar
+  // bayangan nyata. Mengecil & memudar sedikit saat tubuh terangkat
+  // (pantulan langkah), penuh saat diam/duduk.
+  const lift = Math.max(0, pose.rootOffset[1]);
+  const shadowFactor = 1 - Math.min(1, lift / 0.08) * 0.4;
+  const shadowScale = 1 - Math.min(1, lift / 0.08) * 0.15;
+
   return (
     <group position={position} rotation={[0, rotationY, 0]}>
+      {/* Bayangan kontak di tanah (dua lingkaran bertumpuk = tepi lembut) */}
+      <group position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={shadowScale}>
+        <mesh>
+          <circleGeometry args={[0.36 * s, 24]} />
+          <meshBasicMaterial color="#000000" transparent opacity={0.14 * shadowFactor} depthWrite={false} />
+        </mesh>
+        <mesh position={[0, 0, 0.001]}>
+          <circleGeometry args={[0.23 * s, 24]} />
+          <meshBasicMaterial color="#000000" transparent opacity={0.24 * shadowFactor} depthWrite={false} />
+        </mesh>
+      </group>
+
       {/* Kuda tunggangan pada skala dunia 1m saat aksi 'ride_horse' */}
       {isRiding && <MountHorseProp time={time} speed={actionSpeed} />}
 
@@ -403,8 +432,8 @@ export const CharacterModel: React.FC<CharacterModelProps> = ({
           {/* Torso Bell + Napas & Squash */}
           <group
             scale={[
-              1.06 * pose.torsoSquash[0] * (1 + breath * 0.01),
-              pose.torsoSquash[1] * (1 + breath * 0.014),
+              1.06 * pose.torsoSquash[0] * (1 + breathAmp * 0.014),
+              pose.torsoSquash[1] * (1 + breathAmp * 0.02),
               0.88 * pose.torsoSquash[2],
             ]}
           >
@@ -436,7 +465,7 @@ export const CharacterModel: React.FC<CharacterModelProps> = ({
                 : phrase * 0.15
               : 0;
             const shRot: [number, number, number] = [
-              armPose.shoulder[0] - gestureShoulder,
+              armPose.shoulder[0] - gestureShoulder - breathAmp * 0.03,
               armPose.shoulder[1],
               armPose.shoulder[2] - side * gestureShoulder * 0.12,
             ];

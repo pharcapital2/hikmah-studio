@@ -10,7 +10,8 @@
     "remotion:preview": "npx remotion studio src/remotion/index.ts",
     "verify:camera": "npx tsx src/cinematography/verifyPlanner.ts",
     "audit:scene": "npx tsx scripts/auditScene.ts",
-    "storyboard": "node scripts/captureStoryboard.mjs"
+    "storyboard": "node scripts/captureStoryboard.mjs",
+    "render": "remotion render src/remotion/index.ts"
   },
   "dependencies": {
     "@react-three/drei": "^9.117.3",
@@ -25,6 +26,8 @@
     "three": "^0.169.0"
   },
   "devDependencies": {
+    "@remotion/cli": "^4.0.545",
+    "@remotion/tailwind": "^4.0.545",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",
     "@types/three": "^0.169.0",

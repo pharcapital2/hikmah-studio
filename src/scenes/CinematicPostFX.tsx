@@ -32,15 +32,18 @@ export interface CinematicPostFXProps {
 }
 
 const MOOD_SETTINGS = {
+  // Senja: bloom lebih mudah menyala di highlight kulit/langit (threshold
+  // 0.72 → 0.65), warna lebih jenuh & kontras sedikit naik agar tidak pucat,
+  // vignette lebih tegas untuk framing 9:16.
   sunset: {
     bloomIntensity: 0.9,
-    bloomLuminanceThreshold: 0.72,
-    vignetteDarkness: 0.52,
-    vignetteOffset: 0.42,
+    bloomLuminanceThreshold: 0.65,
+    vignetteDarkness: 0.58,
+    vignetteOffset: 0.38,
     brightness: 0.04,
-    contrast: 0.18,
-    hue: 0.02,
-    saturation: 0.22,
+    contrast: 0.2,
+    hue: 0.03,
+    saturation: 0.28,
   },
   night: {
     bloomIntensity: 1.4,

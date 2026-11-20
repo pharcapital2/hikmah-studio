@@ -4,6 +4,7 @@ import { VillageMap } from '../worlds/village/VillageMap';
 import { CityMap } from '../worlds/city/CityMap';
 import { CameraDirector, type CameraPose } from '../cinematography/CameraDirector';
 import { CharacterModel } from '../cast/CharacterModel';
+import { textToVisemes, type VisemeKey } from '../cast/lipsync';
 import type { ProductionStory } from './types';
 import { evaluateSceneAtTime } from './sceneState';
 
@@ -54,6 +55,35 @@ export const ProductionSceneR3F: React.FC<ProductionSceneR3FProps> = ({
   const isNight = activeScene.timeOfDay === 'night';
   const isSunset = activeScene.timeOfDay === 'sunset';
   const isDramaticShorts = story.cinematographyStyle === 'dramatic-shorts';
+
+  // Viseme lip-sync per karakter dari dialogue aktif. Sebelumnya
+  // ProductionSceneR3F tidak pernah mengoper visemes/emphasisTimes/isQuestion
+  // ke CharacterModel (hanya CastPreview yang melakukannya), sehingga mulut
+  // karakter diam saat berbicara di render produksi. textToVisemes memakai
+  // waktu absolut story — sama seperti `time` yang diterima CharacterModel.
+  // Emphasis tiap kata ke-3 mengikuti konvensi CastPreview.
+  const speechByCast = useMemo(() => {
+    const map = new Map<
+      string,
+      Array<{
+        startSec: number;
+        endSec: number;
+        keys: VisemeKey[];
+        isQuestion: boolean;
+        emphasisTimes: number[];
+      }>
+    >();
+    for (const line of activeScene.dialogue) {
+      if (!line.speakerId || line.speakerId === 'narator') continue;
+      const endSec = line.startSec + line.durSec;
+      const { keys, wordTimes, isQuestion } = textToVisemes(line.text, line.startSec, endSec);
+      const emphasisTimes = wordTimes.filter((_, i) => i % 3 === 0);
+      const arr = map.get(line.speakerId) ?? [];
+      arr.push({ startSec: line.startSec, endSec, keys, isQuestion, emphasisTimes });
+      map.set(line.speakerId, arr);
+    }
+    return map;
+  }, [activeScene]);
 
   // Warna dan intensitas lampu 3-point adaptif per waktu & gaya sinematografi
   const keyColor = isSunset ? (isDramaticShorts ? '#FFA630' : '#FFB347') : isNight ? '#3A5F7D' : '#FFF8DC';
@@ -143,6 +173,11 @@ export const ProductionSceneR3F: React.FC<ProductionSceneR3FProps> = ({
           }
         }
 
+        // Baris dialogue yang sedang diucapkan karakter ini (jika ada)
+        const speech = speechByCast
+          .get(char.castId)
+          ?.find((s) => currentTime >= s.startSec && currentTime < s.endSec);
+
         return (
           <CharacterModel
             key={char.castId}
@@ -152,8 +187,13 @@ export const ProductionSceneR3F: React.FC<ProductionSceneR3FProps> = ({
             rotationY={char.facing}
             action={char.action}
             emotion={char.emotion}
+            prevEmotion={char.prevEmotion}
+            emotionStart={char.emotionStart}
+            visemes={speech?.keys}
             speaking={char.speaking}
             listening={char.listening}
+            isQuestion={speech?.isQuestion ?? false}
+            emphasisTimes={speech?.emphasisTimes ?? []}
             lookAt={lookAtTarget}
           />
         );

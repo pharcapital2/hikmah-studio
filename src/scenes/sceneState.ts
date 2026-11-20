@@ -14,6 +14,10 @@ export interface EvaluatedCharacterState {
   facing: number;
   action: CharacterAction;
   emotion: Emotion;
+  /** Emosi segmen timeline sebelumnya, untuk blend 300ms di CharacterModel. */
+  prevEmotion: Emotion;
+  /** Waktu absolut story saat emosi saat ini mulai (untuk blendExpression). */
+  emotionStart: number;
   speaking: boolean;
   listening: boolean;
 }
@@ -76,6 +80,8 @@ function evaluateCharactersAtTime(
     let facing = baseFacing;
     let action: CharacterAction = defaultAction;
     let emotion: Emotion = char.defaultEmotion;
+    let prevEmotion: Emotion = char.defaultEmotion;
+    let emotionStart = activeScene.startSec;
     let speaking = false;
     let listening = false;
 
@@ -93,6 +99,10 @@ function evaluateCharactersAtTime(
         emotion = activeSeg.emotion;
         speaking = activeSeg.speaking ?? false;
         listening = activeSeg.listening ?? false;
+        // Blend emosi 300ms: emosi sebelumnya + kapan emosi ini mulai (absolut).
+        const segIdx = char.timeline.indexOf(activeSeg);
+        prevEmotion = segIdx > 0 ? char.timeline[segIdx - 1].emotion : char.defaultEmotion;
+        emotionStart = activeScene.startSec + activeSeg.startSec;
 
         if (activeSeg.action === 'walk' && (activeSeg.targetPos || baseTargetPos)) {
           const dest = activeSeg.targetPos ?? baseTargetPos!;
@@ -132,6 +142,8 @@ function evaluateCharactersAtTime(
       facing,
       action,
       emotion,
+      prevEmotion,
+      emotionStart,
       speaking,
       listening,
     };

@@ -109,7 +109,17 @@ export const REACTION_MIN_SEC = 0.8;
 export const REACTION_MAX_SEC = 1.5;
 export const MAX_PUSH_SPEED = 1.5; // m/s (docs/CINEMATOGRAPHY.md aturan #6)
 
+/**
+ * Smoothstep ease-in-out (peak velocity 1.5x average).
+ *
+ * The previous cubic ease peaked at 3x average speed mid-move, which made
+ * crane shots and character walks jump >0.35 m per frame at 15 fps (audit
+ * camera-continuity FAIL) and made an 18 m / 10 s bridge walk look like a
+ * sprint (peak ~5.4 m/s). Smoothstep keeps the same ease-in/out feel with
+ * half the peak speed, so camera and walk paths stay under the continuity
+ * threshold and read as calm, motivated movement.
+ */
 export const easeInOut = (t: number): number => {
   const x = Math.min(1, Math.max(0, t));
-  return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  return x * x * (3 - 2 * x);
 };

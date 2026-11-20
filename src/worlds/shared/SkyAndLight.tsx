@@ -3,7 +3,10 @@ import type { TimeOfDay, Weather } from './types';
 import { SKY_PRESETS, WEATHER_FOG } from './palette';
 import { seededRandom } from './seededRandom';
 
-const SHADOW_MAP_SIZE: [number, number] = [1024, 1024];
+// 2048: bayangan matahari lebih tajam di wajah & kostum (kotak ortho ±200 m
+// membuat texel 1024 ≈ 0.4 m — terlalu kasar untuk fitur wajah). normalBias
+// meredam acne bayangan di geometri kepala yang melengkung.
+const SHADOW_MAP_SIZE: [number, number] = [2048, 2048];
 
 interface Props {
   timeOfDay: TimeOfDay;
@@ -25,6 +28,7 @@ export const SkyAndLight = memo(function SkyAndLight({ timeOfDay, weather }: Pro
         castShadow
         shadow-mapSize={SHADOW_MAP_SIZE}
         shadow-bias={-0.0005}
+        shadow-normalBias={0.02}
         shadow-camera-left={-200}
         shadow-camera-right={200}
         shadow-camera-top={200}

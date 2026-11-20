@@ -75,6 +75,7 @@ Editor kelas dunia memotong gambar berdasarkan **Walter Murch's Rule of 6** yang
   1. Karakter pendengar memiliki `listening: true` di `timeline[]`-nya (memicu anggukan halus & kedipan mata).
   2. Emosi pendengar berubah secara bertahap (mis. `thinking` $\rightarrow$ `solemn` $\rightarrow$ `happy`).
   3. Sisipkan shot `MCU` atau `CU` yang menyorot wajah pendengar pada momen puncak.
+* **Aturan Liputan Dialog (wajib, sejak review Konten 3, 2026-11-20):** setiap baris dialog WAJIB punya minimal satu shot yang menampilkan **wajah pendengar** — reaction `MCU`/`CU` pendengar, atau two-shot dengan kedua wajah terbaca. `OTS` saja **tidak cukup**: OTS menampilkan wajah pembicara + bahu pendengar, bukan wajah pendengar. Shot pembicara saja beruntun membuat video terasa amatir — penonton tidak bisa melihat mimik lawan bicara. Pola per baris: shot pembicara (`OTS MCU`) + shot pendengar (`MCU` eye-level 1.2–2.2 dtk) atau two-shot `MCU`. Jika output `generateShotSequence` terlalu condong ke pembicara, ganti dengan shot manual untuk scene itu (preceden: Konten 3 Scene 1).
 
 ### 4. Ritme & Pacing (Kurva Napas Durasi Shot)
 * **Hindari durasi shot yang seragam** (misalnya semua shot rata 4.0 detik — itu terasa mekanis dan membosankan).
@@ -86,7 +87,7 @@ Editor kelas dunia memotong gambar berdasarkan **Walter Murch's Rule of 6** yang
 
 ### 5. Kontinuitas Eye-Trace & 9:16 Safe Zones
 Dalam video 9:16 Hikmah Studio, `ProductionOverlay` merender elemen UI di atas kanvas 3D:
-* **Zona Atas (0% – 14% tinggi layar)**: Header judul & indikator scene.
+* **Zona Atas (0% – 14% tinggi layar)**: sengaja kosong — header judul & waktu putar dihapus (review Konten 3, 2026-11-20: elemen itu tidak perlu dan mengganggu frame). Jangan menaruh elemen overlay baru di zona ini.
 * **Zona Bawah (76% – 100% tinggi layar)**: Kotak subtitle dialog & kartu Hikmah/Dalil.
 * **ZONA EMAS WAJAH (22% – 62% tinggi layar / NDC $Y \in [-0.15, +0.45]$)**:
   Mata dan wajah karakter pada shot `MS`, `MCU`, dan `CU` **WAJIB** berada di Zona Emas ini. Jangan pernah membiarkan wajah karakter turun ke sepertiga bawah layar karena akan tertutup kotak subtitle!
@@ -139,3 +140,14 @@ Setelah menjalankan `npm run audit:scene -- all` dan `npm run storyboard -- all`
 7. **[Kemegahan Shot Penutup]** Apakah shot terakhir (`closure` / Dalil) memberikan komposisi langit/masjid/alam yang lapang dan menyentuh hati sebagai puncak perenungan?
 
 > **Aturan Keras Ruang Editing:** Jika salah satu dari 7 poin di atas masih gagal pada gambar contact sheet PNG, **DILARANG** menyatakan pekerjaan selesai. Perbaiki `shots[]`, `cameraOverride`, atau `timeline[]`, lalu render ulang storyboard sampai setiap panel layak tayang.
+
+---
+
+## 8. Lihat Juga: Playbook Strategi Channel
+
+Playbook ini mengatur **cara membuat video yang bagus**. Cara membuat video
+yang **ditemukan, ditonton sampai habis, dan membuat penonton kembali**
+diatur di `docs/CHANNEL_STRATEGY_PLAYBOOK.md` — cast tetap 2–3 karakter,
+formula 60 detik (hook pertanyaan → satu dilema + pembalikan → hikmah +
+sumber + ajakan komentar), tata bahasa judul, sistem Short + kompilasi, dan
+checklist konten baru. Baca keduanya sebelum membuat konten baru.

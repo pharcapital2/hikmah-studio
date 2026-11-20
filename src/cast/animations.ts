@@ -97,20 +97,22 @@ export function sampleActionPose(
       const ph = t * 5.2 + seed * 0.37;
       const sL = Math.sin(ph);
       const sR = Math.sin(ph + Math.PI);
+      // Pantulan langkah dibuat kecil (0.016) — pantulan besar + kaki yang
+      // tidak menapak membuat karakter terlihat mengambang di atas tanah.
       const bounce = Math.abs(Math.sin(ph));
 
-      pose.rootOffset = [0, bounce * 0.032, 0];
+      pose.rootOffset = [0, bounce * 0.016, 0];
       pose.torsoRot = [0.08, Math.sin(ph) * 0.06, Math.cos(ph) * 0.02];
       pose.torsoSquash = [1 + bounce * 0.012, 1 - bounce * 0.015, 1 + bounce * 0.012];
       pose.headAddRot = [-0.04, -Math.sin(ph) * 0.035, 0];
 
       pose.legL = {
-        hip: [-sL * 0.52, 0, 0.03],
+        hip: [-sL * 0.46, 0, 0.03],
         knee: Math.max(0.05, Math.sin(ph - 0.6) * 0.62 + 0.22),
         ankle: Math.sin(ph + 0.45) * 0.18,
       };
       pose.legR = {
-        hip: [-sR * 0.52, 0, -0.03],
+        hip: [-sR * 0.46, 0, -0.03],
         knee: Math.max(0.05, Math.sin(ph + Math.PI - 0.6) * 0.62 + 0.22),
         ankle: Math.sin(ph + Math.PI + 0.45) * 0.18,
       };

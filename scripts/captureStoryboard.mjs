@@ -23,12 +23,12 @@ function parseArgs(argv) {
   }
   const stories =
     target === 'all'
-      ? ['konten-1', 'konten-2']
-      : target === 'konten-1' || target === 'konten-2'
+      ? ['konten-1', 'konten-2', 'konten-3']
+      : target === 'konten-1' || target === 'konten-2' || target === 'konten-3'
         ? [target]
         : null;
   if (!stories) {
-    throw new Error(`Invalid story argument '${target}'. Use konten-1, konten-2, or all.`);
+    throw new Error(`Invalid story argument '${target}'. Use konten-1, konten-2, konten-3, or all.`);
   }
   return { stories, url };
 }

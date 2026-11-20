@@ -6,7 +6,6 @@ import { Sparkles, BookOpen, Quote } from 'lucide-react';
 interface ProductionOverlayProps {
   story: ProductionStory;
   currentTime: number;
-  cleanMode?: boolean;
 }
 
 const SPEEDLINE_COUNT = 32;
@@ -59,7 +58,6 @@ const RadialSpeedlinesOverlay: React.FC<{ currentTime: number }> = ({ currentTim
 export const ProductionOverlay: React.FC<ProductionOverlayProps> = ({
   story,
   currentTime,
-  cleanMode = false,
 }) => {
   const isDramaticShorts = story.cinematographyStyle === 'dramatic-shorts';
 
@@ -127,45 +125,25 @@ export const ProductionOverlay: React.FC<ProductionOverlayProps> = ({
     <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-between p-4 sm:p-6 overflow-hidden">
       {showSpeedlines && <RadialSpeedlinesOverlay currentTime={currentTime} />}
 
-      {/* 1. Header Bar: Judul & Tema (Disembunyikan jika cleanMode) */}
-      {!cleanMode && (
-        <div className="relative z-20 flex items-center justify-between w-full">
-          <div className="flex items-center gap-2 rounded-full bg-black/60 px-3.5 py-1.5 backdrop-blur-md border border-white/10 shadow-lg">
-            <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-display text-xs font-bold uppercase tracking-wider text-emerald-300">
-              {story.theme}
-            </span>
-            <span className="text-white/30 text-xs">•</span>
-            <span className="text-xs font-medium text-slate-200 truncate max-w-[200px] sm:max-w-xs">
-              {story.title}
-            </span>
-          </div>
-
-          <div className="rounded-full bg-black/50 px-3 py-1 backdrop-blur-md border border-white/10 text-[11px] font-mono text-white/80">
-            {formatTime(currentTime)} / {formatTime(story.totalDurationSec)}
-          </div>
-        </div>
-      )}
-
-      {/* 2. Area Tengah: Kartu Dalil & Mutiara Hikmah */}
+      {/* Area Tengah: Kartu Dalil & Mutiara Hikmah */}
       {isHikmahCardActive && (activeScene.dalilCard || activeScene.hikmahCard) ? (
-        <div className="relative z-20 my-auto mx-auto w-full max-w-md px-2 flex flex-col gap-3.5 animate-in fade-in zoom-in-95 duration-500">
+        <div className="relative z-20 my-auto mx-auto w-full max-w-[560px] px-2 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-500">
           {/* Kartu Dalil Hadits */}
           {activeScene.dalilCard && (
-            <div className="rounded-2xl border border-amber-400/40 bg-gradient-to-b from-slate-950/95 via-slate-900/90 to-emerald-950/90 p-5 shadow-2xl backdrop-blur-md">
+            <div className="rounded-2xl border border-amber-400/40 bg-gradient-to-b from-slate-950/95 via-slate-900/90 to-emerald-950/90 p-6 shadow-2xl backdrop-blur-md">
               <div className="flex items-center justify-between mb-3 border-b border-amber-400/20 pb-2">
-                <div className="flex items-center gap-2 text-amber-300 font-semibold text-xs tracking-wider uppercase">
-                  <BookOpen className="h-4 w-4 text-amber-400" />
+                <div className="flex items-center gap-2 text-amber-300 font-semibold text-sm tracking-wider uppercase">
+                  <BookOpen className="h-5 w-5 text-amber-400" />
                   <span>Hadits Pilihan</span>
                 </div>
-                <span className="rounded-md bg-amber-400/10 px-2 py-0.5 text-[10px] font-medium text-amber-300 border border-amber-400/30">
+                <span className="rounded-md bg-amber-400/10 px-2 py-0.5 text-xs font-medium text-amber-300 border border-amber-400/30">
                   {activeScene.dalilCard.source}
                 </span>
               </div>
 
               {/* Teks Arab */}
               <p
-                className="my-3 text-center font-serif text-2xl font-bold leading-relaxed text-amber-100 drop-shadow-md"
+                className="my-3 text-center font-serif text-3xl font-bold leading-relaxed text-amber-100 drop-shadow-md"
                 dir="rtl"
               >
                 {activeScene.dalilCard.arabic}
@@ -173,11 +151,11 @@ export const ProductionOverlay: React.FC<ProductionOverlayProps> = ({
 
               {/* Transliterasi & Terjemah */}
               {activeScene.dalilCard.transliteration && (
-                <p className="text-center text-xs italic text-amber-200/80 mb-1">
+                <p className="text-center text-sm italic text-amber-200/80 mb-1">
                   "{activeScene.dalilCard.transliteration}"
                 </p>
               )}
-              <p className="text-center text-xs sm:text-sm font-medium text-slate-200">
+              <p className="text-center text-base font-medium text-slate-200">
                 "{activeScene.dalilCard.translation}"
               </p>
             </div>
@@ -185,21 +163,30 @@ export const ProductionOverlay: React.FC<ProductionOverlayProps> = ({
 
           {/* Kartu 3 Mutiara Hikmah */}
           {activeScene.hikmahCard && (
-            <div className="rounded-2xl border border-emerald-400/30 bg-gradient-to-b from-slate-950/95 to-slate-900/90 p-4 shadow-2xl backdrop-blur-md">
-              <div className="flex items-center gap-2 mb-2.5 text-emerald-300 font-bold text-xs uppercase tracking-wide">
-                <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+            <div className="rounded-2xl border border-emerald-400/30 bg-gradient-to-b from-slate-950/95 to-slate-900/90 p-5 shadow-2xl backdrop-blur-md">
+              <div className="flex items-center gap-2 mb-2.5 text-emerald-300 font-bold text-sm uppercase tracking-wide">
+                <Sparkles className="h-4 w-4 text-emerald-400" />
                 <span>{activeScene.hikmahCard.title}</span>
               </div>
               <ul className="flex flex-col gap-2">
                 {activeScene.hikmahCard.points.map((pt, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-200">
-                    <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-[10px] font-bold text-emerald-300 border border-emerald-400/40">
+                  <li key={idx} className="flex items-start gap-2.5 text-sm text-slate-200">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-xs font-bold text-emerald-300 border border-emerald-400/40">
                       {idx + 1}
                     </span>
-                    <span className="leading-tight">{pt}</span>
+                    <span className="leading-snug">{pt}</span>
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {/* Ajakan komentar — tampil di bawah kartu hikmah/dalil */}
+          {activeScene.commentPrompt && (
+            <div className="rounded-full border border-sky-400/40 bg-slate-950/90 px-5 py-2.5 shadow-2xl backdrop-blur-md text-center">
+              <span className="text-sm font-semibold text-sky-200">
+                💬 {activeScene.commentPrompt}
+              </span>
             </div>
           )}
         </div>
@@ -262,11 +249,5 @@ export const ProductionOverlay: React.FC<ProductionOverlayProps> = ({
     </div>
   );
 };
-
-function formatTime(sec: number): string {
-  const m = Math.floor(sec / 60);
-  const s = Math.floor(sec % 60);
-  return `${m}:${s.toString().padStart(2, '0')}`;
-}
 
 export default ProductionOverlay;

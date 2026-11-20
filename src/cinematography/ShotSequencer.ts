@@ -399,6 +399,11 @@ function generateDramaticShortsSequence(
         move: 'dollyTrack',
         lensMm: 35,
         anchor: 'wide',
+        // Diagonal 3/4 (35°) terhadap axis, bukan default 50° dari timur:
+        // di saung sawah, azimuth 50° menaruh tiang saung tepat di garis
+        // pandang ke kedua karakter (audit obstacle-sightline). 35° memutar
+        // kamera ke sisi depan dek sehingga anak yang masuk terlihat jelas.
+        azimuthDeg: azFor(axisA, false),
         startSec: sceneStartSec + hookDur + discDur,
         durSec: enterDur,
         motive: 'Elevated entrance — sudut tinggi mengamati pergerakan karakter memasuki set',
@@ -588,18 +593,18 @@ function generateDramaticShortsSequence(
         })
       );
       shots.push(
-        makeShortsShot(sceneId, idx++, 'low-listen', {
+        makeShortsShot(sceneId, idx++, 'eye-listen', {
           target: hasTwo ? listenerId : speakerId,
-          size: 'MS',
-          angle: 'low',
-          elevation: 'low',
+          size: 'MCU',
+          angle: 'eye',
+          elevation: 'eye',
           headroom: 'tight',
           move: 'microPush',
-          lensMm: 45,
+          lensMm: 55,
           azimuthDeg: azSingleClear(hasTwo ? listenerId : speakerId),
           startSec: winStart + aDur,
           durSec: bDur,
-          motive: 'Low-angle reaksi — sudut rendah berwibawa saat pendengar bersiap menjawab',
+          motive: 'Eye-level MCU pendengar — dikencangkan ke 55mm agar wajah masuk Zona Emas; sudut eye-level membedakannya dari climax-buildup low-angle sesudahnya (hindari jump-cut)',
         })
       );
       cursor = winEnd;
@@ -798,8 +803,16 @@ export function generateShotSequence(
     const needsTwoShot =
       isFirst || (speakerChanged && consecutiveCU >= 2) || (style === 'cinematic' && i % 4 === 0);
 
-    if (isFirst && needsTwoShot) {
-      // ── A. TWO-SHOT: jangkar awal dialog (Wajib tampilkan KEDUANYA dulu) ──
+    // Cabang A berlaku untuk SEMUA line yang butuh two-shot, bukan cuma line
+    // pertama. Sebelumnya kondisi `isFirst && needsTwoShot` membuat line
+    // non-pertama yang butuh reset two-shot (mis. setelah 2 CU berturut-turut,
+    // atau tiap 4 line gaya cinematic) jatuh ke cabang continuation (E): shot
+    // CU-reaction sebelumnya malah diperpanjang menutupi line pembicara lain
+    // (di Konten 1 sc1: satu CU anak statis 16.25 dtk) dan line pembicara
+    // lawannya tidak mendapat shot sama sekali. Logika two-shot + OTS di bawah
+    // ini generik per-line, jadi aman dipakai untuk reset di tengah dialog.
+    if (needsTwoShot) {
+      // ── A. TWO-SHOT: jangkar awal dialog / reset setelah CU berturut-turut ──
       const tsDur = Math.max(2.8, Math.min(3.8, line.durSec * 0.65));
       beats.push({
         type: 'two-shot',

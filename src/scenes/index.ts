@@ -3,6 +3,7 @@ export * from './registry';
 export * from './sceneState';
 export * from './kontenHikmah1';
 export * from './kontenHikmah2';
+export * from './kontenHikmah3';
 export * from './ProductionSceneR3F';
 export * from './ProductionSceneCanvas';
 export * from './ProductionOverlay';

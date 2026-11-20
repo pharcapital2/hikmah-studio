@@ -67,6 +67,8 @@ export interface ProductionScene {
   dialogue: SceneDialogue[];
   hikmahCard?: HikmahCardInfo;
   dalilCard?: DalilCardInfo;
+  /** Ajakan komentar di akhir video (tampil di bawah kartu hikmah/dalil). */
+  commentPrompt?: string;
 }
 
 export interface ProductionStory {

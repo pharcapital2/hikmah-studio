@@ -2,7 +2,10 @@ import type { TimeOfDay, Weather } from './types';
 export interface SkyPreset { sky: string; fog: string; sunColor: string; sunIntensity: number; ambient: number; sunPos: [number, number, number]; night: boolean }
 export const SKY_PRESETS: Record<TimeOfDay, SkyPreset> = {
   day: { sky: '#87ceeb', fog: '#cfe8f5', sunColor: '#fff4d6', sunIntensity: 2.2, ambient: 0.7, sunPos: [60, 90, 40], night: false },
-  sunset: { sky: '#f4a259', fog: '#f7c08a', sunColor: '#ff9a5a', sunIntensity: 1.6, ambient: 0.45, sunPos: [90, 25, 30], night: false },
+  // Senja: matahari lebih kuat + ambient lebih tinggi agar wajah karakter
+  // tidak jatuh gelap di shot MS/CU (sebelumnya 1.6 / 0.45, wajah tampak
+  // datar dan kurang termodel di beberapa shot).
+  sunset: { sky: '#f4a259', fog: '#f7c08a', sunColor: '#ff9a5a', sunIntensity: 1.9, ambient: 0.55, sunPos: [90, 25, 30], night: false },
   night: { sky: '#0a1330', fog: '#0f1a3a', sunColor: '#8aa4ff', sunIntensity: 0.5, ambient: 0.22, sunPos: [-40, 70, -30], night: true },
 };
 export const WEATHER_FOG: Record<Weather, number> = { clear: 0.0025, rain: 0.008, fog: 0.025 };

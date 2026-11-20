@@ -138,11 +138,45 @@ const sc1Shots = generateShotSequence(
   'sc1'
 );
 
+// ─── Variasi two-shot Scene 1 (poles sutradara) ────────────────────────────
+// Probe computePose baseline: ketiga MS two-shot statis ShotSequencer
+// (sc1-auto-2/6/10) memakai pose kamera IDENTIK — camPos (8.4, 1.0, 60.1),
+// aim (7.0, 0.8, 54.0) — sehingga tiga panel contact sheet tampak kembar
+// (gagal Pertanyaan 5 Ruang Editing). Variasikan two-shot ke-2 dan ke-3:
+// ke-2 diganti menjadi OTS MCU pendengar (kakek menyimak), ke-3 digeser
+// azimuth-nya ke 65° + micro push-in. Sisi kamera 180° tetap sama, hanya
+// sudut & ukuran yang berubah. (MCU two-shot 50mm sempat dicoba untuk
+// ke-2, tapi probe menunjukkan kepala kakek keluar frame — NDC x 1.04 —
+// sehingga OTS pendengar dipilih sebagai gantinya.)
+const sc1TwoShots = sc1Shots.filter((s) => s.twoShot && s.size === 'MS');
+if (sc1TwoShots[1]) {
+  // Ganti two-shot master ke-2 menjadi OTS MCU pendengar: pada momen ini
+  // anak sedang bicara (d5, thinking) dan kakek menyimak — reaction shot
+  // pendengar (Playbook Bab 4 Aturan 3) dengan bahu anak sebagai foreground.
+  // Probe: kepala kakek NDC (0.03, 0.24), frontal 0.98, jarak 3.4m.
+  sc1TwoShots[1].target = 'kakek';
+  sc1TwoShots[1].over = 'anak';
+  sc1TwoShots[1].twoShot = false;
+  sc1TwoShots[1].size = 'MCU';
+  sc1TwoShots[1].angle = 'ots';
+  sc1TwoShots[1].lensMm = 55;
+  sc1TwoShots[1].move = 'microPush';
+  sc1TwoShots[1].azimuthDeg = 145;
+  sc1TwoShots[1].motive =
+    'OTS MCU pendengar — kakek menyimak kalimat ragu Fajar, bahu anak sebagai foreground, wajah kakek frontal di Zona Emas';
+}
+if (sc1TwoShots[2]) {
+  sc1TwoShots[2].azimuthDeg = 65;
+  sc1TwoShots[2].move = 'microPush';
+  sc1TwoShots[2].motive =
+    'Two-shot dari azimuth 65° + micro push-in — sudut berbeda untuk variasi ritme visual panel ke-3';
+}
+
 // Scene 2: 38s–60s, hanya narasi → shot manual (ShotSequencer tidak efektif untuk narasi murni)
 // Shot disusun manual mengikuti kaidah sinematografi: masuk → berjalan → doa → crane closure
 
 const sc2Shots: Shot[] = [
-  // 0.0–5.0s: WS dua karakter berjalan memasuki masjid (establishing)
+  // 0.0–4.5s: WS dua karakter berjalan memasuki masjid (establishing)
   {
     id: 'sc2-s1-enter',
     target: 'both',
@@ -152,25 +186,26 @@ const sc2Shots: Shot[] = [
     lensMm: 35,
     anchor: 'wide',
     startSec: 38,
-    durSec: 5.0,
+    durSec: 4.5,
     twoShot: true,
     motive: 'Establishing — dua karakter berjalan menuju masjid, pan mengikuti',
   },
-  // 5.0–10.0s: MS two-shot keduanya berjalan masuk pelataran
+  // 4.5–9.0s: MCU two-shot keduanya berjalan masuk pelataran (dikencangkan
+  // dari MS 5.0s: wajah masuk Zona Emas, micro push-in memberi gerak)
   {
     id: 'sc2-s2-twowalk',
     target: 'both',
-    size: 'MS',
+    size: 'MCU',
     angle: 'eye',
-    move: 'static',
-    lensMm: 40,
+    move: 'microPush',
+    lensMm: 50,
     anchor: 'medium',
-    startSec: 43,
-    durSec: 5.0,
+    startSec: 42.5,
+    durSec: 4.5,
     twoShot: true,
-    motive: 'Two-shot berjalan — tampilkan keduanya memasuki area masjid',
+    motive: 'Two-shot MCU berjalan — dikencangkan ke 50mm + micro push-in agar wajah terbaca saat memasuki pelataran',
   },
-  // 10.0–16.5s: MCU kakek — wajah khusyuk, siap berdoa (kalimat narator hikmah)
+  // 9.0–14.5s: MCU kakek — wajah khusyuk, siap berdoa (kalimat narator hikmah)
   {
     id: 'sc2-s3-cu-kakek',
     target: 'kakek',
@@ -179,11 +214,12 @@ const sc2Shots: Shot[] = [
     move: 'pushIn',
     lensMm: 55,
     azimuthDeg: 155,
-    startSec: 48,
-    durSec: 6.5,
+    startSec: 47,
+    durSec: 5.5,
     motive: 'MCU kakek berdoa — wajah khusyuk, narator membacakan hikmah',
   },
-  // 16.5–19.5s: CU anak — wajah solemn menyimak dan meresapi
+  // 14.5–16.5s: CU anak — wajah solemn menyimak dan meresapi (reaction shot
+  // dipendekkan ke 2.0s sesuai Playbook Bab 4: CU reaksi 1.2–2.2s)
   {
     id: 'sc2-s4-cu-anak',
     target: 'anak',
@@ -192,23 +228,27 @@ const sc2Shots: Shot[] = [
     move: 'static',
     lensMm: 70,
     azimuthDeg: 25,
-    startSec: 54.5,
-    durSec: 3.0,
+    startSec: 52.5,
+    durSec: 2.0,
     motive: 'CU reaksi anak — solemn menyimak dalil yang dibacakan narator',
   },
-  // 19.5–22s: Crane reveal — closure sinematik, kamera naik dari dua karakter ke langit senja
+  // 16.5–22s: Slow pull-out closure — menggantikan crane: probe baseline
+  // menunjukkan crane menaikkan aim (+1.8m) sehingga kepala kedua karakter
+  // tenggelam ke NDC Y -0.08/-0.20 di bawah Zona Emas pada jarak 9–10.4m.
+  // Pull-out eye-level 5.5s menjaga wajah tetap di tengah frame sambil
+  // membuka langit senja untuk kartu dalil.
   {
     id: 'sc2-s5-crane',
     target: 'both',
     size: 'WS',
-    angle: 'low',
-    move: 'crane',
+    angle: 'eye',
+    move: 'slowPull',
     lensMm: 35,
-    anchor: 'aerial',
-    startSec: 57.5,
-    durSec: 2.5,
+    anchor: 'wide',
+    startSec: 54.5,
+    durSec: 5.5,
     twoShot: true,
-    motive: 'Crane reveal closure — kamera naik, langit senja, credit dalil',
+    motive: 'Slow pull-out closure — kamera mundur perlahan, wajah tetap di Zona Emas, langit senja terbuka untuk dalil',
   },
 ];
 

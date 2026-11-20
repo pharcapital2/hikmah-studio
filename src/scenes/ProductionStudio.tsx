@@ -682,7 +682,6 @@ export const ProductionStudio: React.FC<ProductionStudioProps> = ({ onFpsSample 
         <ProductionOverlay
           story={story}
           currentTime={currentTime}
-          cleanMode={cleanPreview}
         />
       </section>
 
