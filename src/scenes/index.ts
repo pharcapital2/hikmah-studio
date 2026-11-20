@@ -4,6 +4,7 @@ export * from './sceneState';
 export * from './kontenHikmah1';
 export * from './kontenHikmah2';
 export * from './kontenHikmah3';
+export * from './kontenHikmah4';
 export * from './ProductionSceneR3F';
 export * from './ProductionSceneCanvas';
 export * from './ProductionOverlay';

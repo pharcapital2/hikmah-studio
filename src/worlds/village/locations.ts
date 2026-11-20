@@ -251,6 +251,11 @@ const GARDEN_PRESETS: StagingPreset[] = [
   },
 ];
 
+/** Pohon tua pahlawan di tepi kebun (Konten 4) — batang besar di x=-38, z=-46.5. */
+const GARDEN_OBSTACLES: ObstacleCircle[] = [
+  { x: -38.0, z: -46.5, r: 1.2, h: 7.0 },
+];
+
 const HOUSES_WEST_PRESETS: StagingPreset[] = [
   {
     id: 'teras-talk',
@@ -274,7 +279,7 @@ export const locations: WorldLocation[] = [
   makeLoc('bamboo-bridge', 'Jembatan Bambu & Tepi Sungai', BRIDGES[1].position[0], BRIDGES[1].position[2] - 12, 0, 10, 'river', 1.8, BAMBOO_BRIDGE_OBSTACLES, BAMBOO_BRIDGE_PRESETS),
   makeLoc('rice-terraces', 'Sawah Bertingkat & Saung', RICE.center[0] - 25, RICE.center[1] + 25, Math.PI * 0.25, 22, 'wind', 3.0, RICE_TERRACES_OBSTACLES, RICE_TERRACES_PRESETS),
   makeLoc('livestock-farm', 'Peternakan Sapi & Kambing', ZONES.farm.center[0], ZONES.farm.center[1] + 17, Math.PI, 12, 'rooster'),
-  makeLoc('garden', 'Kebun Sayur & Lumbung', ZONES.garden.center[0], ZONES.garden.center[1] + 16, Math.PI, 12, 'birds', undefined, undefined, GARDEN_PRESETS),
+  makeLoc('garden', 'Kebun Sayur & Lumbung', ZONES.garden.center[0], ZONES.garden.center[1] + 16, Math.PI, 12, 'birds', undefined, GARDEN_OBSTACLES, GARDEN_PRESETS),
   makeLoc('village-field', 'Lapangan Sepak Bola Desa', ZONES.field.center[0], ZONES.field.center[1], 0, 18, 'crowd'),
   makeLoc('houses-west', 'Pemukiman Rumah Bambu & Kayu', ZONES.houseWest.center[0], ZONES.houseWest.center[1] - 20, 0, 14, 'birds', undefined, undefined, HOUSES_WEST_PRESETS),
   makeLoc('forest-edge', 'Tepi Hutan & Jalan Tanah Barat', -120, 18, -Math.PI / 2, 16, 'wind'),

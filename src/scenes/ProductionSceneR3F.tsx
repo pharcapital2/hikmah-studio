@@ -97,7 +97,7 @@ export const ProductionSceneR3F: React.FC<ProductionSceneR3FProps> = ({
     <>
       {/* 1. Lapis Pencahayaan & Cuaca */}
       <SkyAndLight timeOfDay={activeScene.timeOfDay} weather={activeScene.weather} />
-      <WeatherFx weather={activeScene.weather} time={currentTime} />
+      <WeatherFx weather={activeScene.weather} time={currentTime} center={sceneCenterPos} />
 
       {/* 1b. 3-Point Cinematic Lighting — kunci tampilan "film" */}
       {/* Key light: sumber utama hangat dari sudut 45° atas kanan */}

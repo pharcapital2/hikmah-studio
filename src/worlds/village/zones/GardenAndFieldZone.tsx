@@ -60,6 +60,32 @@ export const GardenAndFieldZone = memo(function GardenAndFieldZone({ time }: { t
   const cropMat = useMemo(() => new THREE.MeshStandardMaterial({ roughness: 0.9 }), []);
   const banTrunkGeo = useMemo(() => new THREE.CylinderGeometry(0.14, 0.22, 2.6, 6), []);
   const banTrunkMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#6b873c', roughness: 0.9 }), []);
+
+  // ---- 1b. Pohon Tua Pahlawan (hero Konten 4) + daun berguguran ----
+  // Berdiri di tepi kebun dekat jalan menuju sawah (x=-38, z=-46.5), di
+  // samping slot dialog 'kebun-talk' — dahannya menaungi jalan, akarnya
+  // mencengkeram tanah. Daun berserakan di sekitar pangkal batang (n2).
+  const treeY = heightAt(-38, -46.5);
+  const fallenLeaves = useMemo(() => {
+    const r = seededRandom(4040);
+    const leaves: InstanceData[] = [];
+    const cols = ['#d9a441', '#8a5a2b', '#5a8a3c', '#c98f2e'];
+    for (let i = 0; i < 48; i++) {
+      const a = r() * Math.PI * 2;
+      const d = 1.5 + r() * 6.5;
+      const lx = -41 + Math.cos(a) * d;
+      const lz = -46.5 + Math.sin(a) * d;
+      leaves.push({
+        position: [lx, heightAt(lx, lz) + 0.06, lz],
+        rotationY: r() * 6.28,
+        scale: [0.8 + r() * 0.6, 1, 0.8 + r() * 0.6],
+        color: cols[Math.floor(r() * cols.length)],
+      });
+    }
+    return leaves;
+  }, []);
+  const leafGeo = useMemo(() => new THREE.BoxGeometry(0.22, 0.03, 0.16), []);
+  const leafMat = useMemo(() => new THREE.MeshStandardMaterial({ roughness: 1 }), []);
   const banLeafGeo = useMemo(() => {
     const g = new THREE.BoxGeometry(1.5, 0.06, 0.45);
     g.translate(0.75, 0.1, 0);
@@ -88,6 +114,48 @@ export const GardenAndFieldZone = memo(function GardenAndFieldZone({ time }: { t
       <Instances geometry={cropGeo} material={cropMat} instances={crops} castShadow />
       <Instances geometry={banTrunkGeo} material={banTrunkMat} instances={bananaTrunks} castShadow />
       <Instances geometry={banLeafGeo} material={banLeafMat} instances={bananaLeaves} castShadow />
+
+      {/* Pohon Tua Pahlawan — hero Konten 4, di tepi kebun dekat jalan */}
+      <group position={[-38, treeY, -46.5]}>
+        {/* Batang tua yang miring sedikit */}
+        <mesh position={[0, 3.5, 0]} rotation={[0, 0, 0.04]} castShadow>
+          <cylinderGeometry args={[0.55, 0.95, 7, 7]} />
+          <meshStandardMaterial color="#6b4a2f" roughness={1} />
+        </mesh>
+        {/* Akar mencengkeram tanah — 6 akar menjalar dari pangkal batang */}
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <group key={i} rotation={[0, (i / 6) * Math.PI * 2 + 0.3, 0]}>
+            <mesh position={[1.0, 0.45, 0]} rotation={[0, 0, -1.87]} castShadow>
+              <cylinderGeometry args={[0.16, 0.34, 2.4, 5]} />
+              <meshStandardMaterial color="#6b4a2f" roughness={1} />
+            </mesh>
+          </group>
+        ))}
+        {/* Dahan rendah menjulur ke arah jalan (timur) */}
+        <mesh position={[2.2, 5.8, 0.6]} rotation={[0, 0, -1.1]} castShadow>
+          <cylinderGeometry args={[0.14, 0.22, 3.2, 5]} />
+          <meshStandardMaterial color="#6b4a2f" roughness={1} />
+        </mesh>
+        {/* Tajuk lebar — dahannya menutupi jalan */}
+        <mesh position={[0, 8.6, 0]} castShadow>
+          <dodecahedronGeometry args={[4.2, 0]} />
+          <meshStandardMaterial color="#2f6b33" flatShading roughness={0.9} />
+        </mesh>
+        <mesh position={[-2.6, 7.6, 0.8]} castShadow>
+          <dodecahedronGeometry args={[3.0, 0]} />
+          <meshStandardMaterial color="#3a7d44" flatShading roughness={0.9} />
+        </mesh>
+        <mesh position={[2.4, 7.9, -0.9]} castShadow>
+          <dodecahedronGeometry args={[3.2, 0]} />
+          <meshStandardMaterial color="#357a3d" flatShading roughness={0.9} />
+        </mesh>
+        <mesh position={[0.6, 10.2, 0.3]} castShadow>
+          <dodecahedronGeometry args={[2.6, 0]} />
+          <meshStandardMaterial color="#2f6b33" flatShading roughness={0.9} />
+        </mesh>
+      </group>
+      {/* Daun berguguran di sekitar pangkal pohon */}
+      <Instances geometry={leafGeo} material={leafMat} instances={fallenLeaves} receiveShadow />
 
       {/* Lapangan Desa */}
       <group position={[fx, fy, fz]}>

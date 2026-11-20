@@ -103,6 +103,9 @@ export const ProductionOverlay: React.FC<ProductionOverlayProps> = ({
       currentTime >= activeScene.startSec + (activeScene.durationSec - 11.5)
   );
 
+  // Label kartu dalil mengikuti sumbernya: ayat Al-Qur'an (QS. ...) atau hadits (HR. ...).
+  const dalilLabel = activeScene.dalilCard?.source.trim().startsWith('QS') ? 'Ayat Al-Qur’an' : 'Hadits Pilihan';
+
   // Karaoke chunk untuk mode dramatic-shorts
   const karaokeData = useMemo(() => {
     if (!isDramaticShorts || !activeDialogueMatch) return null;
@@ -128,13 +131,13 @@ export const ProductionOverlay: React.FC<ProductionOverlayProps> = ({
       {/* Area Tengah: Kartu Dalil & Mutiara Hikmah */}
       {isHikmahCardActive && (activeScene.dalilCard || activeScene.hikmahCard) ? (
         <div className="relative z-20 my-auto mx-auto w-full max-w-[560px] px-2 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-500">
-          {/* Kartu Dalil Hadits */}
+          {/* Kartu Dalil */}
           {activeScene.dalilCard && (
             <div className="rounded-2xl border border-amber-400/40 bg-gradient-to-b from-slate-950/95 via-slate-900/90 to-emerald-950/90 p-6 shadow-2xl backdrop-blur-md">
               <div className="flex items-center justify-between mb-3 border-b border-amber-400/20 pb-2">
                 <div className="flex items-center gap-2 text-amber-300 font-semibold text-sm tracking-wider uppercase">
                   <BookOpen className="h-5 w-5 text-amber-400" />
-                  <span>Hadits Pilihan</span>
+                  <span>{dalilLabel}</span>
                 </div>
                 <span className="rounded-md bg-amber-400/10 px-2 py-0.5 text-xs font-medium text-amber-300 border border-amber-400/30">
                   {activeScene.dalilCard.source}
