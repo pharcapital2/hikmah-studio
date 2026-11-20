@@ -43,8 +43,10 @@ Rumah (bambu/kayu/bata), masjid, balai desa, warung, pasar, sekolah, sawah berti
 ### Checklist Kota
 Gedung pencakar, ruko, apartemen, kantor, masjid raya, mall, rumah sakit, sekolah/kampus, stasiun/halte, jalan raya + marka + zebra cross + lampu lalu lintas + rambu, trotoar, flyover/jembatan, taman kota, pasar modern/kaki lima, mobil (sedan/SUV/angkot/bus/truk), motor, sepeda, pejalan kaki, billboard, lampu jalan, kabel, papan toko, tempat sampah, hidran, siang & malam (neon).
 
-## 3. Aturan Kamera (Kameramen Profesional)
-Detail: `docs/CINEMATOGRAPHY.md`. Ringkasan wajib:
+## 3. Aturan Kamera & Editing (Sutradara & Editor Profesional)
+Detail teknis: `docs/CINEMATOGRAPHY.md`.
+**Masterclass Dramaturgi, Blocking 9:16 & Editing (WAJIB DIBACA)**: `docs/DIRECTOR_EDITOR_PLAYBOOK.md`.
+Ringkasan wajib:
 - Setiap dialog/beat punya **shot plan**: ukuran shot, sudut, gerak, lensa, durasi.
 - Ukuran: EWS/Establishing → WS → MS → MCU → CU → ECU. Selalu mulai scene dengan **establishing shot**.
 - **Aturan 180°** (axis line) dan **30°**: dua shot berurutan pada subjek sama harus beda ≥30° atau beda ukuran.
@@ -201,6 +203,6 @@ src/
   pages/           MapPreview.tsx (/map/village, /map/city)
   scenes/          data scene saja
   data/storyScript.ts
-docs/              CINEMATOGRAPHY.md, PERFORMANCE.md
+docs/              DIRECTOR_EDITOR_PLAYBOOK.md, CINEMATOGRAPHY.md, PERFORMANCE.md
 ```
 File lama di `src/components/scene/*` adalah legacy; migrasi dilakukan bertahap, jangan dihapus sebelum pengganti berfungsi.
