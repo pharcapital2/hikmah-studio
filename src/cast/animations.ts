@@ -8,7 +8,11 @@ export type CharacterAction =
   | 'sit'
   | 'wave'
   | 'carry'
-  | 'drink';
+  | 'drink'
+  | 'pickup'
+  | 'holdWallet'
+  | 'giveWallet'
+  | 'lookAround';
 
 export const ACTION_LABELS: { id: CharacterAction; label: string; icon: string }[] = [
   { id: 'idle', label: 'Diam / Bicara', icon: '🧍' },
@@ -21,6 +25,10 @@ export const ACTION_LABELS: { id: CharacterAction; label: string; icon: string }
   { id: 'wave', label: 'Melambai', icon: '👋' },
   { id: 'carry', label: 'Memikul Panen', icon: '🌾' },
   { id: 'drink', label: 'Minum', icon: '🍵' },
+  { id: 'pickup', label: 'Memungut Dompet', icon: '🤏' },
+  { id: 'holdWallet', label: 'Memegang Dompet', icon: '👛' },
+  { id: 'giveWallet', label: 'Mengulurkan Dompet', icon: '👐' },
+  { id: 'lookAround', label: 'Menoleh Kiri-Kanan', icon: '👀' },
 ];
 
 export interface LimbArmPose {
@@ -378,6 +386,99 @@ export function sampleActionPose(
         shoulder: [0.05, 0, 0.12],
         elbow: 0.16,
       };
+      return pose;
+    }
+
+    case 'pickup': {
+      // Satu gerakan memungut: membungkuk (0–1.1 dtk) -> menggenggam ->
+      // bangkit sambil memegang dompet (1.4–2.5 dtk). Setelah bangkit pose
+      // menetap memegang dompet (dipakai segmen ~3 dtk, d2 Konten 3).
+      const down = smooth01(clamp01(t / 1.1));
+      const up = smooth01(clamp01((t - 1.4) / 1.1));
+      const bend = down * (1 - up);
+      const hold = up;
+
+      pose.rootOffset = [0, -0.14 * bend, 0];
+      pose.torsoRot = [lerp(0.04, 0.52, bend), 0, 0];
+      pose.torsoSquash = [1, 1 - bend * 0.03, 1];
+      pose.headAddRot = [lerp(0, -0.28, bend), 0, 0];
+
+      // Jongkok ringan saat membungkuk
+      pose.legL = {
+        hip: [lerp(0, -0.55, bend), 0, 0.03],
+        knee: lerp(0.05, 0.85, bend),
+        ankle: lerp(0, -0.1, bend),
+      };
+      pose.legR = {
+        hip: [lerp(0, -0.55, bend), 0, -0.03],
+        knee: lerp(0.05, 0.85, bend),
+        ankle: lerp(0, -0.1, bend),
+      };
+
+      // Tangan kanan: menjulur ke tanah lalu terangkat menggenggam di dada
+      const reach = lerp3([-0.22, 0, -0.12], [-0.55, 0, -0.1], bend);
+      const holdPose = lerp3([-0.22, 0, -0.12], [-0.85, 0.1, -0.15], 1);
+      pose.armR = {
+        shoulder: lerp3(reach, holdPose, hold),
+        elbow: lerp(lerp(0.14, 0.35, bend), 0.95, hold),
+      };
+      pose.armL = {
+        shoulder: [-0.1, 0, 0.12],
+        elbow: 0.2 + bend * 0.2,
+      };
+      return pose;
+    }
+
+    case 'holdWallet': {
+      // Berdiri diam sambil memegang dompet di depan dada dan menunduk
+      // memeriksanya (dipakai saat Fajar menimbang-nimbang, d3/d5 Konten 3).
+      const sway = Math.sin(t * 0.35 + seed) * 0.015;
+      const breathe = Math.sin(t * 1.1 + seed) * 0.03;
+      pose.rootOffset = [sway, 0, 0];
+      pose.torsoRot = [0.06, 0, 0];
+      pose.headAddRot = [0.14 + breathe * 0.3, 0, 0];
+
+      pose.armR = {
+        shoulder: [-0.85, 0.1, -0.15],
+        elbow: 0.95 + breathe * 0.1,
+      };
+      pose.armL = {
+        shoulder: [breathe, 0, 0.1],
+        elbow: 0.15 + breathe * 0.5,
+      };
+      return pose;
+    }
+
+    case 'giveWallet': {
+      // Mengulurkan dompet ke depan dengan sedikit membungkuk hormat
+      // (dipakai saat Fajar mengembalikan dompet, d7 Konten 3).
+      const sway = Math.sin(t * 0.35 + seed) * 0.01;
+      pose.rootOffset = [sway, 0, 0];
+      pose.torsoRot = [0.12, 0, 0];
+      pose.headAddRot = [0.08, 0, 0];
+
+      pose.armR = {
+        shoulder: [-1.35, 0, -0.12],
+        elbow: 0.12,
+      };
+      pose.armL = {
+        shoulder: [-0.08, 0, 0.12],
+        elbow: 0.2,
+      };
+      return pose;
+    }
+
+    case 'lookAround': {
+      // Menoleh kiri-kanan perlahan (~1 siklus per 2.6 dtk) sambil tubuh diam
+      // (dipakai saat narasi "menoleh ke kanan dan ke kiri", d2 Konten 3).
+      const yaw = Math.sin(t * 2.4 + seed) * 0.45;
+      const sway = Math.sin(t * 0.35 + seed) * 0.015;
+      pose.rootOffset = [sway, 0, 0];
+      pose.torsoRot = [0.02, yaw * 0.25, 0];
+      pose.headAddRot = [0, yaw, 0.03];
+
+      pose.armL = { shoulder: [0.03, 0, 0.1], elbow: 0.15 };
+      pose.armR = { shoulder: [-0.03, 0, -0.1], elbow: 0.15 };
       return pose;
     }
 

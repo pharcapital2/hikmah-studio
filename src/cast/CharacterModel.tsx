@@ -7,7 +7,7 @@ import { blendExpression } from './expressions';
 import { blinkAt, listenerNodAt, saccadeAt } from './idle';
 import { sampleMouth, type VisemeKey } from './lipsync';
 import { CharacterOutfit, SleeveCapMesh } from './outfits';
-import { CarryPoleProp, ClayCupProp, HoeProp, MountHorseProp } from './props3d';
+import { CarryPoleProp, ClayCupProp, HoeProp, MountHorseProp, WalletProp } from './props3d';
 
 export interface CharacterModelProps {
   castId: string;
@@ -165,9 +165,12 @@ const HeadwearMesh: React.FC<HeadwearProps> = ({ costume, grad }) => {
     const innerBand = costume.accent ?? '#fbcfe8';
     return (
       <group>
-        {/* Ciput / pita dalam di dahi atas (di atas garis alis agar wajah bersih) */}
-        <mesh position={[0, 0.068, -0.028]} rotation={[-0.3, 0, 0]} scale={[1.055, 1.02, 0.99]}>
-          <sphereGeometry args={[0.27, 22, 16, 0, Math.PI * 2, 0, Math.PI * 0.42]} />
+        {/* Ciput / pita dalam — diselipkan DI BAWAH kerudung utama dan dibuat
+            lebih kecil, supaya hanya seiris tipis yang tampak di garis dahi.
+            Sebelumnya ciput menonjol di depan kerudung seperti pita terpisah
+            di atas kepala — itu yang terlihat berserakan. */}
+        <mesh position={[0, 0.052, -0.052]} rotation={[-0.36, 0, 0]} scale={[1.03, 0.99, 0.96]}>
+          <sphereGeometry args={[0.27, 22, 16, 0, Math.PI * 2, 0, Math.PI * 0.38]} />
           <meshToonMaterial color={innerBand} gradientMap={grad} />
         </mesh>
 
@@ -189,30 +192,22 @@ const HeadwearMesh: React.FC<HeadwearProps> = ({ costume, grad }) => {
           <sphereGeometry args={[0.27, 20, 12, 0, Math.PI * 2, 0, Math.PI * 0.43]} />
         </mesh>
 
-        {/* Lipatan samping pipi kiri/kanan */}
-        {[-1, 1].map((side) => (
-          <group key={`hijab-flap-${side}`} position={[side * 0.215, -0.1, -0.01]} rotation={[0.1, 0, side * 0.14]}>
-            <mesh scale={[0.075, 0.16, 0.11]}>
-              <sphereGeometry args={[1, 12, 10]} />
-              <meshToonMaterial color={costume.top} gradientMap={grad} />
-            </mesh>
-            <mesh scale={[0.088, 0.174, 0.122]} material={OUTLINE_MAT}>
-              <sphereGeometry args={[1, 10, 8]} />
-            </mesh>
-          </group>
-        ))}
+        {/* Lipatan samping pipi DIHAPUS — dua gumpalan terpisah di pipi membuat
+            siluet kerudung terlihat berserakan; sisi wajah kini ditutup mulus
+            oleh kerudung utama yang sudah membungkus sampai ke leher. */}
 
-        {/* Drape leher/dada hijab */}
-        <mesh position={[0, -0.25, -0.025]} scale={[1.08, 1, 0.9]}>
-          <cylinderGeometry args={[0.165, 0.245, 0.19, 20]} />
+        {/* Drape leher/dada hijab — diturunkan dan dipinggangkan di atas agar
+            tepi atasnya jatuh di bawah dagu, bukan memotong garis rahang. */}
+        <mesh position={[0, -0.27, -0.03]} scale={[1.08, 1, 0.9]}>
+          <cylinderGeometry args={[0.15, 0.245, 0.19, 20]} />
           <meshToonMaterial color={costume.top} gradientMap={grad} />
         </mesh>
         <mesh
-          position={[0, -0.25, -0.025]}
+          position={[0, -0.27, -0.03]}
           scale={[1.13, 1.05, 0.95]}
           material={OUTLINE_MAT}
         >
-          <cylinderGeometry args={[0.165, 0.245, 0.19, 20]} />
+          <cylinderGeometry args={[0.15, 0.245, 0.19, 20]} />
         </mesh>
       </group>
     );
@@ -507,6 +502,10 @@ export const CharacterModel: React.FC<CharacterModelProps> = ({
                       <HoeProp impact={pose.hoeImpact} />
                     )}
                     {side === -1 && action === 'drink' && <ClayCupProp />}
+                    {side === -1 &&
+                      (action === 'pickup' ||
+                        action === 'holdWallet' ||
+                        action === 'giveWallet') && <WalletProp />}
                   </group>
                 </group>
               </group>

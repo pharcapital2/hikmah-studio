@@ -440,6 +440,37 @@ export const ClayCupProp: React.FC = () => {
 };
 
 /**
+ * Dompet kulit cokelat terlipat dengan kancing kuningan — digenggam tangan
+ * kanan karakter saat aksi 'pickup', 'holdWallet', dan 'giveWallet'.
+ */
+export const WalletProp: React.FC = () => {
+  const grad = useMemo(() => getToonGradientTexture(), []);
+
+  return (
+    <group position={[0, -0.02, 0.035]} rotation={[0.5, 0, 0.15]}>
+      {/* Badan dompet */}
+      <mesh>
+        <boxGeometry args={[0.16, 0.03, 0.11]} />
+        <meshToonMaterial color="#78350f" gradientMap={grad} />
+      </mesh>
+      <mesh scale={[1.08, 1.25, 1.08]} material={OUTLINE_MAT}>
+        <boxGeometry args={[0.16, 0.03, 0.11]} />
+      </mesh>
+      {/* Lipatan penutup */}
+      <mesh position={[0, 0.02, 0.01]}>
+        <boxGeometry args={[0.16, 0.012, 0.07]} />
+        <meshToonMaterial color="#92400e" gradientMap={grad} />
+      </mesh>
+      {/* Kancing kuningan */}
+      <mesh position={[0, 0.028, 0.045]}>
+        <sphereGeometry args={[0.012, 10, 8]} />
+        <meshToonMaterial color="#f59e0b" gradientMap={grad} />
+      </mesh>
+    </group>
+  );
+};
+
+/**
  * Pikulan bambu dengan dua keranjang anyaman berisi ikatan padi emas yang berayun
  * seirama langkah saat aksi `'carry'`. Dipasang di bahu karakter.
  */
