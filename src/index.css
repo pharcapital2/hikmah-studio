@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  accent-color: #10b981;
+  scrollbar-color: rgba(16, 185, 129, 0.45) rgba(15, 23, 42, 0.6);
+  scrollbar-width: thin;
+}
+
+* {
+  scrollbar-color: rgba(16, 185, 129, 0.45) rgba(15, 23, 42, 0.6);
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.45);
+  border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.75);
+}
+
+::selection {
+  background-color: rgba(16, 185, 129, 0.35);
+  color: #ecfdf5;
+}
+
+html,
+body,
+#root {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  margin: 0;
+}
+
+body {
+  background: radial-gradient(circle at 20% 10%, #0f172a 0%, #020617 70%);
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+.studio-chrome {
+  user-select: none;
+}
+
+.tiktok-subtitle-stroke {
+  paint-order: stroke fill;
+  -webkit-text-stroke: 6px #090d16;
+  text-shadow: 0 4px 14px rgba(0, 0, 0, 0.85);
+}
+
+.tiktok-subtitle-stroke-sm {
+  paint-order: stroke fill;
+  -webkit-text-stroke: 3.5px #090d16;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
+}
+
+input[type='range'].studio-scrubber {
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type='range'].studio-scrubber::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.35), rgba(245, 158, 11, 0.35));
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+input[type='range'].studio-scrubber::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -5px;
+  border-radius: 9999px;
+  background: #10b981;
+  border: 2px solid #ecfdf5;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.7);
+}
+
+input[type='range'].studio-scrubber::-moz-range-track {
+  height: 8px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.35), rgba(245, 158, 11, 0.35));
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+input[type='range'].studio-scrubber::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #10b981;
+  border: 2px solid #ecfdf5;
+}
+
+@keyframes wordPop {
+  0% {
+    transform: scale(0.95);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1.04);
+  }
+}
+
+.word-active {
+  animation: wordPop 0.18s ease-out forwards;
+}
+
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-card-reveal {
+  animation: cardReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}

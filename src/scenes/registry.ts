@@ -1,0 +1,18 @@
+import type { ProductionStory } from './types';
+import { KONTEN_HIKMAH_1 } from './kontenHikmah1';
+import { KONTEN_HIKMAH_2 } from './kontenHikmah2';
+
+export interface StoryRegistryEntry {
+  key: string; // 'konten-1' | 'konten-2'
+  label: string;
+  story: ProductionStory;
+}
+
+export const PRODUCTION_STORIES: StoryRegistryEntry[] = [
+  { key: 'konten-2', label: '🌾 Konten #2 (Sawah)', story: KONTEN_HIKMAH_2 },
+  { key: 'konten-1', label: '🎬 Konten #1 (Jembatan)', story: KONTEN_HIKMAH_1 },
+];
+
+export function getStoryById(idOrKey: string): ProductionStory | undefined {
+  return PRODUCTION_STORIES.find((e) => e.key === idOrKey || e.story.id === idOrKey)?.story;
+}
